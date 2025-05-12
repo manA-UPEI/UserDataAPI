@@ -1,6 +1,11 @@
 package com.example.secondspringboot;
 
+import jakarta.validation.Valid;
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -28,19 +33,20 @@ public class UserController {
     }
 
     @PostMapping
-    public String addUser(@RequestBody User user) { //binds Json with User object
+    public ResponseEntity<String> addUser( @RequestBody @Valid User user) { //binds Json with User object
         userList.add(user);
         userRepository.save(user);
-        return "User added: " + user.getName();
+        return ResponseEntity.status(HttpStatus.CREATED).body("User added: " + user.getName());
     }
 
-    @DeleteMapping("/{id}")
-    public String deleteUser(@PathVariable Long id) {
+    @DeleteMapping("/{i}")
+    public ResponseEntity<String> deleteUser(@PathVariable("i") Long id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
-            return "User deleted with ID: " + id;
+            return ResponseEntity.ok( "User deleted with ID: " + id);
         } else {
-            return "User with ID " + id + " not found.";
+            //return ResponseEntity.notFound().build(); //without Body!
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found"); //build can be skipped
         }
     }
 
