@@ -1,9 +1,11 @@
 package com.example.secondspringboot;
 
+import jakarta.validation.Valid;
 import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -31,10 +33,10 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<String> addUser(@RequestBody User user) { //binds Json with User object
+    public ResponseEntity<String> addUser( @RequestBody @Valid User user) { //binds Json with User object
         userList.add(user);
         userRepository.save(user);
-        return ResponseEntity.ok("User added: " + user.getName());
+        return ResponseEntity.status(HttpStatus.CREATED).body("User added: " + user.getName());
     }
 
     @DeleteMapping("/{i}")
